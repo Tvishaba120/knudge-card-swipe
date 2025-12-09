@@ -1,11 +1,24 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Plus, X, Calendar, Sparkles, MessageSquare } from 'lucide-react';
+import { Search, Plus, X, Calendar, Sparkles, MessageSquare, Clock, Rss } from 'lucide-react';
 import { ContactItem } from '@/components/ContactItem';
 import { Avatar } from '@/components/Avatar';
 import { PlatformBadge } from '@/components/PlatformBadge';
 import { Button } from '@/components/ui/button';
 import { mockContacts, circles, Contact } from '@/data/mockData';
+
+// Mock recent conversations
+const mockConversations = [
+  { id: 'conv1', message: 'Hey, great meeting you at the conference!', timestamp: '2 days ago', isSent: true },
+  { id: 'conv2', message: 'Thanks! Would love to discuss the partnership further.', timestamp: '2 days ago', isSent: false },
+  { id: 'conv3', message: 'Absolutely, let me send over some details.', timestamp: '1 day ago', isSent: true },
+];
+
+// Mock contact feeds
+const mockContactFeeds = [
+  { id: 'feed1', title: 'Shared an article about AI trends', platform: 'linkedin', timestamp: '5 hours ago' },
+  { id: 'feed2', title: 'Posted a YouTube video: "Future of Tech"', platform: 'youtube', timestamp: '1 day ago' },
+];
 
 export default function Contacts() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -97,39 +110,34 @@ export default function Contacts() {
         <Plus className="h-6 w-6 text-primary-foreground" />
       </button>
 
-      {/* Contact Detail Modal */}
+      {/* Contact Detail Modal - Positioned higher */}
       <AnimatePresence>
         {selectedContact && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-foreground/20 backdrop-blur-sm flex items-end justify-center"
+            className="fixed inset-0 z-50 bg-foreground/20 backdrop-blur-sm flex items-start justify-center pt-8 pb-24 overflow-y-auto"
             onClick={() => setSelectedContact(null)}
           >
             <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 50, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-card rounded-t-3xl shadow-elevated w-full max-w-lg max-h-[80vh] overflow-y-auto"
+              className="bg-card rounded-3xl shadow-elevated w-full max-w-lg mx-4 overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Handle bar */}
-              <div className="flex justify-center pt-3 pb-2">
-                <div className="h-1 w-10 rounded-full bg-muted" />
-              </div>
-
               {/* Close button */}
               <button
                 onClick={() => setSelectedContact(null)}
-                className="absolute top-4 right-4 h-8 w-8 rounded-full bg-muted flex items-center justify-center"
+                className="absolute top-4 right-4 h-8 w-8 rounded-full bg-muted flex items-center justify-center z-10"
               >
                 <X className="h-4 w-4 text-muted-foreground" />
               </button>
 
               {/* Content */}
-              <div className="px-6 pb-8">
+              <div className="px-6 py-6">
                 {/* Header */}
                 <div className="flex flex-col items-center text-center mb-6">
                   <Avatar initials={selectedContact.avatar} size="xl" isVIP={selectedContact.isVIP} />
@@ -160,10 +168,55 @@ export default function Contacts() {
                 </div>
 
                 {/* Last Contact */}
-                <div className="bg-muted/50 rounded-2xl p-4 mb-6">
+                <div className="bg-muted/50 rounded-2xl p-4 mb-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Last contacted</span>
                     <span className="text-sm font-medium text-foreground">{selectedContact.lastContacted}</span>
+                  </div>
+                </div>
+
+                {/* Recent Conversations */}
+                <div className="mb-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium text-foreground">Recent Conversations</span>
+                  </div>
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {mockConversations.map((conv) => (
+                      <div
+                        key={conv.id}
+                        className={`p-3 rounded-xl text-sm ${
+                          conv.isSent 
+                            ? 'bg-primary/10 text-foreground ml-4' 
+                            : 'bg-muted/50 text-foreground mr-4'
+                        }`}
+                      >
+                        <p>{conv.message}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{conv.timestamp}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Contact's Feeds */}
+                <div className="mb-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Rss className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium text-foreground">Recent Activity</span>
+                  </div>
+                  <div className="space-y-2">
+                    {mockContactFeeds.map((feed) => (
+                      <div
+                        key={feed.id}
+                        className="p-3 rounded-xl bg-muted/30 border border-border"
+                      >
+                        <div className="flex items-center gap-2">
+                          <PlatformBadge platform={feed.platform as any} size="sm" />
+                          <p className="text-sm text-foreground flex-1">{feed.title}</p>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1 ml-8">{feed.timestamp}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
