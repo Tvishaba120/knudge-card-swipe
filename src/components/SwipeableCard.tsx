@@ -53,10 +53,17 @@ export function SwipeableCard({ card, onSwipeRight, onSwipeLeft, isTop }: Swipea
   return (
     <motion.div
       className={cn(
-        'absolute inset-x-4 top-0 bottom-28 touch-none',
+        'absolute inset-x-4 touch-none',
         !isTop && 'pointer-events-none'
       )}
-      style={{ x, rotate, opacity, zIndex: isTop ? 10 : 1 }}
+      style={{ 
+        x, 
+        rotate, 
+        opacity, 
+        zIndex: isTop ? 10 : 1,
+        top: 0,
+        height: 'calc(100vh - 200px)'
+      }}
       drag={isTop ? 'x' : false}
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.7}
@@ -116,8 +123,8 @@ export function SwipeableCard({ card, onSwipeRight, onSwipeLeft, isTop }: Swipea
         </div>
 
         {/* Message - Clickable to edit with scroll */}
-        <div className="p-5 flex-1 flex flex-col min-h-0 overflow-hidden">
-          <div className="flex items-center justify-between mb-3">
+        <div className="p-5 flex-1 flex flex-col min-h-0">
+          <div className="flex items-center justify-between mb-3 flex-shrink-0">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               AI Draft
             </span>
@@ -127,25 +134,30 @@ export function SwipeableCard({ card, onSwipeRight, onSwipeLeft, isTop }: Swipea
             </div>
           </div>
 
-          {isEditing ? (
-            <textarea
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onBlur={() => setIsEditing(false)}
-              className="w-full flex-1 min-h-[100px] p-3 rounded-xl bg-card/80 border border-border text-foreground text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 overflow-y-auto"
-              autoFocus
-            />
-          ) : (
-            <div 
-              onClick={() => setIsEditing(true)}
-              className="flex-1 min-h-[100px] p-3 rounded-xl bg-card/50 border border-transparent hover:border-border/50 cursor-text transition-colors overflow-y-auto"
-            >
-              <p className="text-foreground text-sm leading-relaxed">{draft}</p>
-            </div>
-          )}
+          {/* Scrollable draft container */}
+          <div className="flex-1 min-h-0 overflow-hidden">
+            {isEditing ? (
+              <textarea
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                onBlur={() => setIsEditing(false)}
+                className="w-full h-full p-3 rounded-xl bg-card/80 border border-border text-foreground text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 overflow-y-auto"
+                style={{ maxHeight: '180px', minHeight: '120px' }}
+                autoFocus
+              />
+            ) : (
+              <div 
+                onClick={() => setIsEditing(true)}
+                className="h-full p-3 rounded-xl bg-card/50 border border-transparent hover:border-border/50 cursor-text transition-colors overflow-y-auto"
+                style={{ maxHeight: '180px', minHeight: '120px' }}
+              >
+                <p className="text-foreground text-sm leading-relaxed">{draft}</p>
+              </div>
+            )}
+          </div>
 
-          {/* Regenerate section */}
-          <div className="mt-3 space-y-2">
+          {/* Regenerate section - fixed at bottom */}
+          <div className="mt-3 space-y-2 flex-shrink-0">
             {showRegenerateInput && (
               <input
                 type="text"

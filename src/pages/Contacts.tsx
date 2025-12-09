@@ -110,22 +110,22 @@ export default function Contacts() {
         <Plus className="h-6 w-6 text-primary-foreground" />
       </button>
 
-      {/* Contact Detail Modal - Positioned higher */}
+      {/* Contact Detail Modal - Positioned at top */}
       <AnimatePresence>
         {selectedContact && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-foreground/20 backdrop-blur-sm flex items-start justify-center pt-8 pb-24 overflow-y-auto"
+            className="fixed inset-0 z-50 bg-foreground/20 backdrop-blur-sm overflow-y-auto"
             onClick={() => setSelectedContact(null)}
           >
             <motion.div
-              initial={{ y: 50, opacity: 0 }}
+              initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 50, opacity: 0 }}
+              exit={{ y: -50, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-card rounded-3xl shadow-elevated w-full max-w-lg mx-4 overflow-hidden"
+              className="bg-card rounded-3xl shadow-elevated w-full max-w-lg mx-auto mt-[5vh] mb-24 overflow-hidden relative"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close button */}
@@ -175,46 +175,62 @@ export default function Contacts() {
                   </div>
                 </div>
 
-                {/* Recent Conversations */}
-                <div className="mb-4">
+                {/* Recent Conversations - Timeline style */}
+                <div className="mb-6">
                   <div className="flex items-center gap-2 mb-3">
-                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium text-foreground">Recent Conversations</span>
+                    <MessageSquare className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-semibold text-foreground">Recent Conversations</span>
+                    <span className="text-xs text-muted-foreground">(Last 10)</span>
                   </div>
-                  <div className="space-y-2 max-h-32 overflow-y-auto">
-                    {mockConversations.map((conv) => (
-                      <div
-                        key={conv.id}
-                        className={`p-3 rounded-xl text-sm ${
+                  <div className="relative pl-4 border-l-2 border-primary/20 space-y-3 max-h-48 overflow-y-auto">
+                    {mockConversations.map((conv, index) => (
+                      <div key={conv.id} className="relative">
+                        <div className={`absolute -left-[21px] top-2 h-3 w-3 rounded-full border-2 ${
+                          conv.isSent ? 'bg-primary border-primary' : 'bg-secondary border-secondary'
+                        }`} />
+                        <div className={`p-3 rounded-xl text-sm ${
                           conv.isSent 
-                            ? 'bg-primary/10 text-foreground ml-4' 
-                            : 'bg-muted/50 text-foreground mr-4'
-                        }`}
-                      >
-                        <p>{conv.message}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{conv.timestamp}</p>
+                            ? 'bg-primary/10 border border-primary/20' 
+                            : 'bg-muted/50 border border-border'
+                        }`}>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className={`text-xs font-medium ${conv.isSent ? 'text-primary' : 'text-muted-foreground'}`}>
+                              {conv.isSent ? 'You' : selectedContact.name.split(' ')[0]}
+                            </span>
+                            <Clock className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">{conv.timestamp}</span>
+                          </div>
+                          <p className="text-foreground">{conv.message}</p>
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Contact's Feeds */}
+                {/* Contact's Feeds - Card grid */}
                 <div className="mb-6">
                   <div className="flex items-center gap-2 mb-3">
-                    <Rss className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium text-foreground">Recent Activity</span>
+                    <Rss className="h-4 w-4 text-secondary" />
+                    <span className="text-sm font-semibold text-foreground">Their Feeds</span>
                   </div>
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-1 gap-3">
                     {mockContactFeeds.map((feed) => (
                       <div
                         key={feed.id}
-                        className="p-3 rounded-xl bg-muted/30 border border-border"
+                        className="p-4 rounded-xl bg-gradient-to-r from-muted/50 to-muted/30 border border-border hover:border-primary/30 transition-colors"
                       >
-                        <div className="flex items-center gap-2">
-                          <PlatformBadge platform={feed.platform as any} size="sm" />
-                          <p className="text-sm text-foreground flex-1">{feed.title}</p>
+                        <div className="flex items-start gap-3">
+                          <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
+                            <PlatformBadge platform={feed.platform as any} size="md" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground line-clamp-2">{feed.title}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Clock className="h-3 w-3 text-muted-foreground" />
+                              <span className="text-xs text-muted-foreground">{feed.timestamp}</span>
+                            </div>
+                          </div>
                         </div>
-                        <p className="text-xs text-muted-foreground mt-1 ml-8">{feed.timestamp}</p>
                       </div>
                     ))}
                   </div>
