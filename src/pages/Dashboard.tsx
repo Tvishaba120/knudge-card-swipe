@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Bell, Layers, MessageSquare, Users, Wifi } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -5,9 +6,11 @@ import { StatsCard } from '@/components/StatsCard';
 import { ActivityItem } from '@/components/ActivityItem';
 import { PlatformBadge } from '@/components/PlatformBadge';
 import { Button } from '@/components/ui/button';
+import { NotificationPanel } from '@/components/NotificationPanel';
 import { mockActivities, mockConnections, mockActionCards } from '@/data/mockData';
 
 export default function Dashboard() {
+  const [showNotifications, setShowNotifications] = useState(false);
   const connectedPlatforms = mockConnections.filter((c) => c.status === 'connected');
 
   return (
@@ -21,12 +24,21 @@ export default function Dashboard() {
             </div>
             <span className="font-bold text-xl text-foreground">Knudge</span>
           </div>
-          <button className="h-10 w-10 rounded-xl bg-muted/50 flex items-center justify-center relative hover:bg-muted transition-colors">
+          <button 
+            onClick={() => setShowNotifications(true)}
+            className="h-10 w-10 rounded-xl bg-muted/50 flex items-center justify-center relative hover:bg-muted transition-colors"
+          >
             <Bell className="h-5 w-5 text-muted-foreground" />
             <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-destructive" />
           </button>
         </div>
       </header>
+
+      {/* Notification Panel */}
+      <NotificationPanel 
+        isOpen={showNotifications} 
+        onClose={() => setShowNotifications(false)} 
+      />
 
       <main className="px-4 py-6 space-y-6">
         {/* Stats Grid */}
@@ -115,7 +127,7 @@ export default function Dashboard() {
         >
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold text-foreground">Recent Activity</h2>
-            <button className="text-sm text-primary font-medium">View all</button>
+            <Link to="/activities" className="text-sm text-primary font-medium">View all</Link>
           </div>
           <div className="bg-card rounded-2xl border border-border divide-y divide-border">
             {mockActivities.slice(0, 5).map((activity) => (

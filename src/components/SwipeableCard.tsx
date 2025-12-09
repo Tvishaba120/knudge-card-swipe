@@ -1,10 +1,11 @@
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import { useState } from 'react';
-import { Check, X, Calendar } from 'lucide-react';
+import { Check, X, Calendar, RefreshCw, Send } from 'lucide-react';
 import { ActionCard } from '@/data/mockData';
 import { Avatar } from './Avatar';
 import { PlatformBadge, getPlatformCardStyles } from './PlatformBadge';
 import { cn } from '@/lib/utils';
+import { Button } from './ui/button';
 
 interface SwipeableCardProps {
   card: ActionCard;
@@ -16,6 +17,8 @@ interface SwipeableCardProps {
 export function SwipeableCard({ card, onSwipeRight, onSwipeLeft, isTop }: SwipeableCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(card.draft);
+  const [regenerateInstructions, setRegenerateInstructions] = useState('');
+  const [showRegenerateInput, setShowRegenerateInput] = useState(false);
 
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-15, 15]);
@@ -33,12 +36,24 @@ export function SwipeableCard({ card, onSwipeRight, onSwipeLeft, isTop }: Swipea
     }
   };
 
+  const handleRegenerate = () => {
+    // Simulate AI regeneration
+    const variations = [
+      `Hi ${card.contact.name.split(' ')[0]}, just wanted to touch base! ${regenerateInstructions ? `(Based on: ${regenerateInstructions})` : ''} Looking forward to connecting soon.`,
+      `Hey ${card.contact.name.split(' ')[0]}! Hope all is well with you. ${regenerateInstructions ? `Specifically regarding: ${regenerateInstructions}` : ''} Let's catch up when you have a moment.`,
+      `${card.contact.name.split(' ')[0]}, thinking of you! ${regenerateInstructions ? `I wanted to ask about ${regenerateInstructions}.` : ''} Would be great to reconnect.`,
+    ];
+    setDraft(variations[Math.floor(Math.random() * variations.length)]);
+    setShowRegenerateInput(false);
+    setRegenerateInstructions('');
+  };
+
   const platformStyles = getPlatformCardStyles(card.platform);
 
   return (
     <motion.div
       className={cn(
-        'absolute inset-x-4 top-0 touch-none',
+        'absolute inset-x-4 top-0 bottom-28 touch-none',
         !isTop && 'pointer-events-none'
       )}
       style={{ x, rotate, opacity, zIndex: isTop ? 10 : 1 }}
@@ -71,7 +86,7 @@ export function SwipeableCard({ card, onSwipeRight, onSwipeLeft, isTop }: Swipea
 
       {/* Card content with platform-specific background */}
       <div className={cn(
-        'rounded-3xl shadow-elevated border overflow-hidden min-h-[480px] flex flex-col',
+        'rounded-3xl shadow-elevated border overflow-hidden h-full flex flex-col',
         platformStyles.cardBg,
         platformStyles.borderClass
       )}>
@@ -100,8 +115,8 @@ export function SwipeableCard({ card, onSwipeRight, onSwipeLeft, isTop }: Swipea
           <p className="text-sm text-muted-foreground">{card.context}</p>
         </div>
 
-        {/* Message - Clickable to edit */}
-        <div className="p-5 flex-1 flex flex-col">
+        {/* Message - Clickable to edit with scroll */}
+        <div className="p-5 flex-1 flex flex-col min-h-0 overflow-hidden">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               AI Draft
@@ -117,21 +132,66 @@ export function SwipeableCard({ card, onSwipeRight, onSwipeLeft, isTop }: Swipea
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               onBlur={() => setIsEditing(false)}
-              className="w-full flex-1 min-h-[140px] p-3 rounded-xl bg-card/80 border border-border text-foreground text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full flex-1 min-h-[100px] p-3 rounded-xl bg-card/80 border border-border text-foreground text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 overflow-y-auto"
               autoFocus
             />
           ) : (
             <div 
               onClick={() => setIsEditing(true)}
-              className="flex-1 min-h-[140px] p-3 rounded-xl bg-card/50 border border-transparent hover:border-border/50 cursor-text transition-colors"
+              className="flex-1 min-h-[100px] p-3 rounded-xl bg-card/50 border border-transparent hover:border-border/50 cursor-text transition-colors overflow-y-auto"
             >
               <p className="text-foreground text-sm leading-relaxed">{draft}</p>
             </div>
           )}
+
+          {/* Regenerate section */}
+          <div className="mt-3 space-y-2">
+            {showRegenerateInput && (
+              <input
+                type="text"
+                placeholder="Add instructions for regeneration (optional)..."
+                value={regenerateInstructions}
+                onChange={(e) => setRegenerateInstructions(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg bg-card/80 border border-border text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+            )}
+            <div className="flex gap-2">
+              {showRegenerateInput ? (
+                <>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowRegenerateInput(false)}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={handleRegenerate}
+                    className="flex-1 gradient-primary text-primary-foreground border-0"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                    Regenerate
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setShowRegenerateInput(true)}
+                  className="w-full"
+                >
+                  <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                  Regenerate with Instructions
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Priority indicator */}
-        <div className="px-5 pb-4">
+        <div className="px-5 pb-3">
           <div
             className={cn(
               'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium',
@@ -153,7 +213,7 @@ export function SwipeableCard({ card, onSwipeRight, onSwipeLeft, isTop }: Swipea
         </div>
 
         {/* Swipe hint */}
-        <div className="px-5 pb-5">
+        <div className="px-5 pb-4">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
               <div className="h-6 w-6 rounded-full bg-destructive/10 flex items-center justify-center">

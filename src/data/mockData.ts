@@ -192,6 +192,23 @@ export const mockFeedItems: FeedItem[] = [
     suggestion: 'Share with your investor network',
     timestamp: '6 hours ago',
   },
+  {
+    id: 'f4',
+    type: 'youtube',
+    title: 'Building a Successful Startup in 2024',
+    source: 'Startup Grind',
+    thumbnail: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=300',
+    suggestion: 'Share your own startup journey insights',
+    timestamp: '8 hours ago',
+  },
+  {
+    id: 'f5',
+    type: 'linkedin',
+    title: 'Sarah Chen announced new product features',
+    source: 'Sarah Chen',
+    suggestion: 'Congratulate and offer collaboration',
+    timestamp: '1 day ago',
+  },
 ];
 
 export const mockActivities: Activity[] = [
@@ -231,6 +248,28 @@ export const mockActivities: Activity[] = [
     platform: 'Signal',
     message: 'Congratulated on product launch',
     timestamp: '3 days ago',
+  },
+  {
+    id: 'a6',
+    type: 'received',
+    contact: 'John Investor',
+    platform: 'Email',
+    message: 'Responded to your funding update',
+    timestamp: '3 days ago',
+  },
+  {
+    id: 'a7',
+    type: 'sent',
+    contact: 'David Kim',
+    platform: 'Signal',
+    message: 'Shared project documentation',
+    timestamp: '4 days ago',
+  },
+  {
+    id: 'a8',
+    type: 'reminder',
+    message: "Time to reach out to VIP contacts",
+    timestamp: '5 days ago',
   },
 ];
 
