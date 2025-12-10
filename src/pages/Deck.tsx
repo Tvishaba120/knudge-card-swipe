@@ -65,7 +65,7 @@ export default function Deck() {
       </header>
 
       {/* Card Stack */}
-      <main className="flex-1 relative overflow-hidden">
+      <main className="flex-1 relative overflow-hidden" style={{ height: 'calc(100vh - 65px)' }}>
         {isEmpty ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -99,7 +99,7 @@ export default function Deck() {
             </Link>
           </motion.div>
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0">
             {/* Cards stack container */}
             <div className="relative w-full h-full">
               <AnimatePresence mode="popLayout">

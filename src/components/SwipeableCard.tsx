@@ -59,7 +59,7 @@ export function SwipeableCard({ card, onSwipeRight, onSwipeLeft, isTop, stackInd
   return (
     <motion.div
       className={cn(
-        'absolute left-4 right-4 touch-none',
+        'absolute inset-x-4 top-2 bottom-2 touch-none',
         !isTop && 'pointer-events-none'
       )}
       style={{ 
@@ -67,8 +67,6 @@ export function SwipeableCard({ card, onSwipeRight, onSwipeLeft, isTop, stackInd
         rotate: isTop ? rotate : 0, 
         opacity: isTop ? opacity : stackOpacity,
         zIndex: stackZIndex,
-        top: '50%',
-        translateY: '-50%',
       }}
       drag={isTop ? 'x' : false}
       dragConstraints={{ left: 0, right: 0 }}
@@ -116,14 +114,13 @@ export function SwipeableCard({ card, onSwipeRight, onSwipeLeft, isTop, stackInd
 
       {/* Card content with platform-specific background */}
       <div className={cn(
-        'rounded-3xl shadow-xl border overflow-hidden flex flex-col',
+        'h-full rounded-3xl shadow-xl border overflow-hidden flex flex-col',
         stackIndex === 0 && 'shadow-2xl',
         stackIndex === 1 && 'shadow-lg',
         stackIndex === 2 && 'shadow-md',
         platformStyles.cardBg,
         platformStyles.borderClass
       )}
-      style={{ maxHeight: 'calc(100vh - 180px)' }}
       >
         {/* Header */}
         <div className="p-4 border-b border-border/50 bg-card/60 backdrop-blur-sm flex-shrink-0">
