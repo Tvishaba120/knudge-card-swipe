@@ -43,7 +43,18 @@ export default function Deck() {
           <span className="font-semibold text-foreground">The Deck</span>
           <div className="w-16" />
         </div>
-
+        
+        {/* Progress bar - visual only */}
+        {!isEmpty && (
+          <div className="h-1 bg-muted mx-4 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full gradient-primary rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${(currentIndex / totalCards) * 100}%` }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+        )}
       </header>
 
       {/* Card Stack */}
