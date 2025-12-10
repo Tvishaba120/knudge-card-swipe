@@ -2,8 +2,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { BottomNav } from "@/components/ui/BottomNav";
+import { useOnboardingStore } from "@/stores/onboardingStore";
 import Index from "./pages/Index";
 import Deck from "./pages/Deck";
 import Connections from "./pages/Connections";
@@ -12,8 +13,60 @@ import Feed from "./pages/Feed";
 import Settings from "./pages/Settings";
 import Activities from "./pages/Activities";
 import NotFound from "./pages/NotFound";
+import OnboardingLogin from "./pages/onboarding/OnboardingLogin";
+import OnboardingGoal from "./pages/onboarding/OnboardingGoal";
+import OnboardingProfile from "./pages/onboarding/OnboardingProfile";
+import OnboardingVoice from "./pages/onboarding/OnboardingVoice";
+import OnboardingKnowledge from "./pages/onboarding/OnboardingKnowledge";
+import OnboardingConnections from "./pages/onboarding/OnboardingConnections";
+import OnboardingTrial from "./pages/onboarding/OnboardingTrial";
+import OnboardingComplete from "./pages/onboarding/OnboardingComplete";
 
 const queryClient = new QueryClient();
+
+function AppRoutes() {
+  const location = useLocation();
+  const { completed } = useOnboardingStore();
+  const isOnboardingRoute = location.pathname.startsWith('/onboarding');
+
+  // Redirect to onboarding if not completed
+  if (!completed && !isOnboardingRoute) {
+    return <Navigate to="/onboarding/login" replace />;
+  }
+
+  // Redirect to main app if onboarding is complete and user tries to access onboarding
+  if (completed && isOnboardingRoute) {
+    return <Navigate to="/" replace />;
+  }
+
+  return (
+    <>
+      <Routes>
+        {/* Onboarding routes */}
+        <Route path="/onboarding" element={<Navigate to="/onboarding/login" replace />} />
+        <Route path="/onboarding/login" element={<OnboardingLogin />} />
+        <Route path="/onboarding/goal" element={<OnboardingGoal />} />
+        <Route path="/onboarding/profile" element={<OnboardingProfile />} />
+        <Route path="/onboarding/voice" element={<OnboardingVoice />} />
+        <Route path="/onboarding/knowledge" element={<OnboardingKnowledge />} />
+        <Route path="/onboarding/connections" element={<OnboardingConnections />} />
+        <Route path="/onboarding/trial" element={<OnboardingTrial />} />
+        <Route path="/onboarding/complete" element={<OnboardingComplete />} />
+        
+        {/* Main app routes */}
+        <Route path="/" element={<Index />} />
+        <Route path="/deck" element={<Deck />} />
+        <Route path="/connections" element={<Connections />} />
+        <Route path="/contacts" element={<Contacts />} />
+        <Route path="/feed" element={<Feed />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/activities" element={<Activities />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      {!isOnboardingRoute && <BottomNav />}
+    </>
+  );
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -22,17 +75,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <div className="max-w-lg mx-auto bg-background min-h-screen relative">
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/deck" element={<Deck />} />
-            <Route path="/connections" element={<Connections />} />
-            <Route path="/contacts" element={<Contacts />} />
-            <Route path="/feed" element={<Feed />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/activities" element={<Activities />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <BottomNav />
+          <AppRoutes />
         </div>
       </BrowserRouter>
     </TooltipProvider>
