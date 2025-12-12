@@ -1,10 +1,11 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useRef, useEffect } from 'react';
-import { User, Users, Sparkles, Bell, Crown, LogOut, ChevronRight, Plus, Edit2, X, Phone, Mail, Linkedin as LinkedinIcon, MessageCircle, Send } from 'lucide-react';
+import { useState } from 'react';
+import { User, Users, Sparkles, Bell, Crown, LogOut, ChevronRight, Plus, Edit2, X, Phone, Mail, Linkedin as LinkedinIcon, MessageCircle, Send, Search, Check, UserCheck } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type ChannelType = 'whatsapp' | 'linkedin' | 'email' | 'calls' | 'telegram';
 
@@ -12,8 +13,16 @@ interface Circle {
   name: string;
   channels: ChannelType[];
   frequency: string;
-  contacts: number;
+  contactIds: string[];
   outreachAgenda: string;
+}
+
+interface SettingsContact {
+  id: string;
+  name: string;
+  avatar: string;
+  title: string;
+  company?: string;
 }
 
 const channelOptions: { id: ChannelType; label: string; color: string; icon: React.ReactNode }[] = [
@@ -22,6 +31,18 @@ const channelOptions: { id: ChannelType; label: string; color: string; icon: Rea
   { id: 'email', label: 'Email', color: '#6B7280', icon: <Mail className="h-4 w-4" /> },
   { id: 'calls', label: 'Calls', color: '#8B5CF6', icon: <Phone className="h-4 w-4" /> },
   { id: 'telegram', label: 'Telegram', color: '#26A5E4', icon: <Send className="h-4 w-4" /> },
+];
+
+// Sample contacts for testing
+const allContacts: SettingsContact[] = [
+  { id: 'ct1', name: 'John Doe', avatar: 'JD', title: 'Marketing Director', company: 'TechCorp' },
+  { id: 'ct2', name: 'Sarah Smith', avatar: 'SS', title: 'Family Member', company: '' },
+  { id: 'ct3', name: 'Mike Johnson', avatar: 'MJ', title: 'Software Engineer', company: 'StartupXYZ' },
+  { id: 'ct4', name: 'Emily Brown', avatar: 'EB', title: 'CEO', company: 'InnovateTech' },
+  { id: 'ct5', name: 'David Lee', avatar: 'DL', title: 'Family Member', company: '' },
+  { id: 'ct6', name: 'Jessica Wilson', avatar: 'JW', title: 'Product Manager', company: 'BigTech' },
+  { id: 'ct7', name: 'Robert Taylor', avatar: 'RT', title: 'Angel Investor', company: 'Taylor Capital' },
+  { id: 'ct8', name: 'Amanda Garcia', avatar: 'AG', title: 'Designer', company: 'DesignStudio' },
 ];
 
 interface UserProfile {
@@ -34,9 +55,9 @@ interface UserProfile {
 }
 
 const initialCircles: Circle[] = [
-  { name: 'VIP Investors', channels: ['whatsapp', 'email', 'linkedin'], frequency: 'Every 2 weeks', contacts: 12, outreachAgenda: 'Discuss investment opportunities and share portfolio updates' },
-  { name: 'Team', channels: ['whatsapp', 'calls'], frequency: 'Weekly', contacts: 8, outreachAgenda: 'Weekly sync, project updates, and team coordination' },
-  { name: 'Friends', channels: ['whatsapp', 'telegram'], frequency: 'Monthly', contacts: 24, outreachAgenda: 'Catch up, share life updates, plan meetups' },
+  { name: 'VIP Investors', channels: ['whatsapp', 'email', 'linkedin'], frequency: 'Every 2 weeks', contactIds: ['ct4', 'ct7'], outreachAgenda: 'Discuss investment opportunities and share portfolio updates' },
+  { name: 'Team', channels: ['whatsapp', 'calls'], frequency: 'Weekly', contactIds: ['ct1', 'ct3', 'ct6', 'ct8'], outreachAgenda: 'Weekly sync, project updates, and team coordination' },
+  { name: 'Friends', channels: ['whatsapp', 'telegram'], frequency: 'Monthly', contactIds: ['ct2', 'ct5'], outreachAgenda: 'Catch up, share life updates, plan meetups' },
 ];
 
 const frequencyOptions = ['Daily', 'Weekly', 'Every 2 weeks', 'Monthly', 'Quarterly'];
@@ -51,7 +72,8 @@ export default function Settings() {
   const [circles, setCircles] = useState<Circle[]>(initialCircles);
   const [showCircleForm, setShowCircleForm] = useState(false);
   const [editingCircle, setEditingCircle] = useState<Circle | null>(null);
-  const [circleForm, setCircleForm] = useState<Circle>({ name: '', channels: [], frequency: 'Weekly', contacts: 0, outreachAgenda: '' });
+  const [circleForm, setCircleForm] = useState<Circle>({ name: '', channels: [], frequency: 'Weekly', contactIds: [], outreachAgenda: '' });
+  const [contactSearchQuery, setContactSearchQuery] = useState('');
   
   const [showProfileForm, setShowProfileForm] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile>({
@@ -69,7 +91,8 @@ export default function Settings() {
 
   const handleAddCircle = () => {
     setEditingCircle(null);
-    setCircleForm({ name: '', channels: [], frequency: 'Weekly', contacts: 0, outreachAgenda: '' });
+    setCircleForm({ name: '', channels: [], frequency: 'Weekly', contactIds: [], outreachAgenda: '' });
+    setContactSearchQuery('');
     setShowCircleForm(true);
   };
 
@@ -85,8 +108,36 @@ export default function Settings() {
   const handleEditCircle = (circle: Circle) => {
     setEditingCircle(circle);
     setCircleForm(circle);
+    setContactSearchQuery('');
     setShowCircleForm(true);
   };
+
+  const toggleContactSelection = (contactId: string) => {
+    setCircleForm(prev => ({
+      ...prev,
+      contactIds: prev.contactIds.includes(contactId)
+        ? prev.contactIds.filter(id => id !== contactId)
+        : [...prev.contactIds, contactId]
+    }));
+  };
+
+  const selectAllContacts = () => {
+    const filteredIds = filteredContacts.map(c => c.id);
+    setCircleForm(prev => ({
+      ...prev,
+      contactIds: [...new Set([...prev.contactIds, ...filteredIds])]
+    }));
+  };
+
+  const clearAllContacts = () => {
+    setCircleForm(prev => ({ ...prev, contactIds: [] }));
+  };
+
+  const filteredContacts = allContacts.filter(contact =>
+    contact.name.toLowerCase().includes(contactSearchQuery.toLowerCase()) ||
+    contact.title.toLowerCase().includes(contactSearchQuery.toLowerCase()) ||
+    (contact.company && contact.company.toLowerCase().includes(contactSearchQuery.toLowerCase()))
+  );
 
   const handleSaveCircle = () => {
     if (!circleForm.name || !circleForm.outreachAgenda || circleForm.channels.length === 0) return;
@@ -190,7 +241,7 @@ export default function Settings() {
                   <div>
                     <h3 className="font-medium text-foreground">{circle.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {circle.frequency} • {circle.contacts} contacts
+                      {circle.frequency} • {circle.contactIds.length} contacts
                     </p>
                   </div>
                 </div>
@@ -443,6 +494,91 @@ export default function Settings() {
                   <div className="flex justify-between mt-1">
                     <p className="text-xs text-muted-foreground">This will guide AI when generating drafts for contacts in this circle</p>
                     <span className="text-xs text-muted-foreground">{circleForm.outreachAgenda.length} characters</span>
+                  </div>
+                </div>
+
+                {/* Assign Contacts Section */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                      <UserCheck className="h-4 w-4 text-primary" />
+                      Assign Contacts
+                    </label>
+                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary">
+                      {circleForm.contactIds.length} selected
+                    </span>
+                  </div>
+                  
+                  {/* Search Bar */}
+                  <div className="relative mb-3">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <input
+                      type="text"
+                      value={contactSearchQuery}
+                      onChange={(e) => setContactSearchQuery(e.target.value)}
+                      placeholder="Search contacts..."
+                      className="w-full h-10 pl-10 pr-4 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
+                    />
+                  </div>
+
+                  {/* Select All / Clear All Buttons */}
+                  <div className="flex gap-2 mb-3">
+                    <button
+                      type="button"
+                      onClick={selectAllContacts}
+                      className="flex-1 py-2 text-xs font-medium rounded-lg bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
+                    >
+                      Select All
+                    </button>
+                    <button
+                      type="button"
+                      onClick={clearAllContacts}
+                      className="flex-1 py-2 text-xs font-medium rounded-lg bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
+                    >
+                      Clear All
+                    </button>
+                  </div>
+
+                  {/* Contact List */}
+                  <div className="border border-border rounded-xl overflow-hidden max-h-48 overflow-y-auto">
+                    {filteredContacts.length === 0 ? (
+                      <div className="p-4 text-center text-sm text-muted-foreground">
+                        No contacts found
+                      </div>
+                    ) : (
+                      filteredContacts.map((contact) => {
+                        const isSelected = circleForm.contactIds.includes(contact.id);
+                        return (
+                          <button
+                            key={contact.id}
+                            type="button"
+                            onClick={() => toggleContactSelection(contact.id)}
+                            className={cn(
+                              'w-full flex items-center gap-3 p-3 text-left transition-colors border-b border-border last:border-b-0',
+                              isSelected ? 'bg-primary/5' : 'hover:bg-muted/50'
+                            )}
+                          >
+                            <div className={cn(
+                              'h-5 w-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all',
+                              isSelected 
+                                ? 'bg-primary border-primary' 
+                                : 'border-muted-foreground/30'
+                            )}>
+                              {isSelected && <Check className="h-3 w-3 text-primary-foreground" />}
+                            </div>
+                            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center flex-shrink-0">
+                              <span className="text-xs font-semibold text-foreground">{contact.avatar}</span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate">{contact.name}</p>
+                              <p className="text-xs text-muted-foreground truncate">
+                                {contact.title}{contact.company ? ` • ${contact.company}` : ''}
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      })
+                    )}
                   </div>
                 </div>
               </div>
