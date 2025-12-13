@@ -647,8 +647,8 @@ export default function ChatDetail() {
       />
 
       {/* Input Bar - Fixed above bottom navigation */}
-      <div className="fixed bottom-16 left-0 right-0 z-30 bg-card border-t border-border shadow-lg safe-area-inset-bottom">
-        <div className="max-w-4xl mx-auto px-3 py-2">
+      <div className="fixed bottom-16 left-0 right-0 z-30 bg-card border-t border-border shadow-lg safe-area-inset-bottom overflow-hidden">
+        <div className="w-full max-w-4xl mx-auto px-4 py-2">
           {/* File Preview */}
           <AnimatePresence>
             {selectedFile && (
