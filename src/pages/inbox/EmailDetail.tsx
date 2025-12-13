@@ -163,7 +163,7 @@ export default function EmailDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col pb-24">
+    <div className="min-h-screen bg-background flex flex-col pb-40">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-card border-b border-border p-4">
         <div className="flex items-center justify-between mb-2">
@@ -308,30 +308,30 @@ export default function EmailDetail() {
         })}
       </main>
 
-      {/* Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border p-4">
-        <div className="max-w-2xl mx-auto grid grid-cols-3 gap-3">
+      {/* Action Bar - positioned above BottomNav */}
+      <div className="fixed bottom-20 left-0 right-0 z-40 bg-card border-t border-border shadow-lg px-4 py-3">
+        <div className="max-w-lg mx-auto grid grid-cols-3 gap-2">
           <button
             onClick={() => openComposer('reply')}
-            className="flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-cyan-500 text-white rounded-xl py-3 font-semibold hover:opacity-90 transition-opacity"
+            className="flex items-center justify-center gap-1.5 bg-gradient-to-r from-primary to-cyan-500 text-white rounded-xl py-3.5 font-semibold hover:opacity-90 transition-opacity shadow-md"
           >
-            <Reply className="h-4 w-4" />
+            <Reply className="h-5 w-5" />
             <span>Reply</span>
           </button>
           
           <button
             onClick={() => openComposer('replyAll')}
-            className="flex items-center justify-center gap-2 bg-card border-2 border-border text-foreground rounded-xl py-3 font-semibold hover:bg-muted transition-colors"
+            className="flex items-center justify-center gap-1.5 bg-card border-2 border-primary/30 text-foreground rounded-xl py-3.5 font-semibold hover:bg-primary/10 hover:border-primary transition-colors"
           >
-            <ReplyAll className="h-4 w-4" />
-            <span>Reply All</span>
+            <ReplyAll className="h-5 w-5" />
+            <span className="text-sm">Reply All</span>
           </button>
           
           <button
             onClick={() => openComposer('forward')}
-            className="flex items-center justify-center gap-2 bg-card border-2 border-border text-foreground rounded-xl py-3 font-semibold hover:bg-muted transition-colors"
+            className="flex items-center justify-center gap-1.5 bg-card border-2 border-primary/30 text-foreground rounded-xl py-3.5 font-semibold hover:bg-primary/10 hover:border-primary transition-colors"
           >
-            <Forward className="h-4 w-4" />
+            <Forward className="h-5 w-5" />
             <span>Forward</span>
           </button>
         </div>
