@@ -222,12 +222,36 @@ export default function EmailComposer({ isOpen, onClose, mode, originalEmail }: 
         >
           {/* Header */}
           <div className="bg-gradient-to-r from-primary to-cyan-500 text-white p-4 flex items-center justify-between">
-            <h2 className="font-semibold text-lg truncate pr-4">{getTitle()}</h2>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleClose}
+                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <h2 className="font-semibold text-lg truncate">{getTitle()}</h2>
+            </div>
             <button
-              onClick={handleClose}
-              className="p-2 hover:bg-white/20 rounded-full transition-colors"
+              onClick={handleSend}
+              disabled={isSending || !to.length || !subject.trim()}
+              className={cn(
+                "flex items-center gap-2 px-5 py-2 rounded-lg font-semibold transition-all shadow-lg",
+                to.length && subject.trim()
+                  ? "bg-white text-primary hover:bg-primary-foreground hover:shadow-xl"
+                  : "bg-white/50 text-white/70 cursor-not-allowed"
+              )}
             >
-              <X className="h-5 w-5" />
+              {isSending ? (
+                <>
+                  <span className="animate-spin h-4 w-4 border-2 border-primary/30 border-t-primary rounded-full" />
+                  <span>Sending...</span>
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" />
+                  <span>Send</span>
+                </>
+              )}
             </button>
           </div>
 
