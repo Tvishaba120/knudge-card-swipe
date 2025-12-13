@@ -163,7 +163,7 @@ export default function EmailDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col pb-40">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-card border-b border-border p-4">
         <div className="flex items-center justify-between mb-2">
@@ -218,7 +218,7 @@ export default function EmailDetail() {
       </div>
 
       {/* Email Threads */}
-      <main className="flex-1 overflow-y-auto p-4 space-y-4">
+      <main className="flex-1 overflow-y-auto p-4 pb-32 space-y-4">
         {email.threads.map((thread, index) => {
           const isExpanded = expandedThreads.has(thread.id);
           const isLatest = index === 0;
