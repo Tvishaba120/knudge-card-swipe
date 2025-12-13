@@ -413,61 +413,70 @@ export default function ChatDetail() {
                   !isLastInGroup ? 'mb-1' : 'mb-3'
                 )}
               >
-                <div
-                  onClick={() => handleReplyClick(message)}
-                  className={cn(
-                    'px-4 py-2.5 max-w-[70%] transition-all',
-                    message.type === 'outgoing'
-                      ? 'bg-gradient-to-r from-primary to-cyan-500 text-white rounded-2xl rounded-tr-sm'
-                      : 'bg-muted text-foreground rounded-2xl rounded-tl-sm cursor-pointer hover:bg-muted/80'
-                  )}
-                >
-                  {/* Attachment Preview */}
-                  {message.attachment && (
-                    <div className="mb-2">
-                      {message.attachment.type === 'image' && message.attachment.url ? (
-                        <img 
-                          src={message.attachment.url} 
-                          alt={message.attachment.name}
-                          className="rounded-lg max-w-full h-auto"
-                        />
-                      ) : (
-                        <div className={cn(
-                          "flex items-center gap-2 p-2 rounded-lg",
-                          message.type === 'outgoing' ? 'bg-white/20' : 'bg-background'
-                        )}>
-                          <FileText className="h-5 w-5" />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">{message.attachment.name}</p>
-                            <p className="text-xs opacity-70">{message.attachment.size}</p>
+                <div className="flex flex-col max-w-[70%]">
+                  <div
+                    className={cn(
+                      'px-4 py-2.5 transition-all',
+                      message.type === 'outgoing'
+                        ? 'bg-gradient-to-r from-primary to-cyan-500 text-white rounded-2xl rounded-tr-sm'
+                        : 'bg-muted text-foreground rounded-2xl rounded-tl-sm'
+                    )}
+                  >
+                    {/* Attachment Preview */}
+                    {message.attachment && (
+                      <div className="mb-2">
+                        {message.attachment.type === 'image' && message.attachment.url ? (
+                          <img 
+                            src={message.attachment.url} 
+                            alt={message.attachment.name}
+                            className="rounded-lg max-w-full h-auto"
+                          />
+                        ) : (
+                          <div className={cn(
+                            "flex items-center gap-2 p-2 rounded-lg",
+                            message.type === 'outgoing' ? 'bg-white/20' : 'bg-background'
+                          )}>
+                            <FileText className="h-5 w-5" />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">{message.attachment.name}</p>
+                              <p className="text-xs opacity-70">{message.attachment.size}</p>
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  
-                  {message.text && (
-                    <p className="text-base leading-relaxed">{message.text}</p>
-                  )}
-                  
-                  {isLastInGroup && (
-                    <div className={cn(
-                      'flex items-center gap-1 mt-1',
-                      message.type === 'outgoing' ? 'justify-end' : 'justify-start'
-                    )}>
-                      <span className={cn(
-                        'text-xs',
-                        message.type === 'outgoing' ? 'text-white/70' : 'text-muted-foreground'
+                        )}
+                      </div>
+                    )}
+                    
+                    {message.text && (
+                      <p className="text-base leading-relaxed">{message.text}</p>
+                    )}
+                    
+                    {isLastInGroup && (
+                      <div className={cn(
+                        'flex items-center gap-1 mt-1',
+                        message.type === 'outgoing' ? 'justify-end' : 'justify-start'
                       )}>
-                        {message.timestamp}
-                      </span>
-                      {message.type === 'outgoing' && renderStatus(message.status)}
-                    </div>
-                  )}
+                        <span className={cn(
+                          'text-xs',
+                          message.type === 'outgoing' ? 'text-white/70' : 'text-muted-foreground'
+                        )}>
+                          {message.timestamp}
+                        </span>
+                        {message.type === 'outgoing' && renderStatus(message.status)}
+                      </div>
+                    )}
+                  </div>
                   
-                  {/* Reply hint for incoming messages */}
+                  {/* Reply hint for incoming messages - OUTSIDE bubble, clickable */}
                   {message.type === 'incoming' && isLastInGroup && (
-                    <p className="text-xs text-muted-foreground/60 mt-1">Tap to reply</p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleReplyClick(message);
+                      }}
+                      className="text-xs text-primary/70 hover:text-primary mt-1.5 ml-1 text-left font-medium active:scale-95 transition-all"
+                    >
+                      Tap to reply
+                    </button>
                   )}
                 </div>
               </motion.div>
