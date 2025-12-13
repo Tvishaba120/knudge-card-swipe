@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, MessageCircle, Linkedin, Mail, X, Check, Archive, MailOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -6,6 +6,24 @@ import { TopBar } from '@/components/TopBar';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useUnreadStore } from '@/stores/unreadStore';
+
+// Helper function to highlight search terms
+const highlightText = (text: string, query: string): React.ReactNode => {
+  if (!query.trim()) return text;
+  
+  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  const parts = text.split(regex);
+  
+  return parts.map((part, index) => 
+    regex.test(part) ? (
+      <mark key={index} className="bg-yellow-200 text-foreground px-0.5 rounded font-medium">
+        {part}
+      </mark>
+    ) : (
+      part
+    )
+  );
+};
 
 interface InboxMessage {
   id: string;
@@ -484,7 +502,7 @@ export default function Inbox() {
                             message.unread ? 'text-foreground' : 'text-muted-foreground'
                           )}
                         >
-                          {message.sender.name}
+                          {highlightText(message.sender.name, searchQuery)}
                         </span>
                         <span
                           className={cn(
@@ -497,9 +515,11 @@ export default function Inbox() {
                       </div>
                       <p className="text-sm text-muted-foreground line-clamp-2 mt-0.5">
                         {message.subject && (
-                          <span className="font-medium text-foreground">{message.subject}: </span>
+                          <span className="font-medium text-foreground">
+                            {highlightText(message.subject, searchQuery)}:{' '}
+                          </span>
                         )}
-                        {message.preview}
+                        {highlightText(message.preview, searchQuery)}
                       </p>
                     </div>
 
