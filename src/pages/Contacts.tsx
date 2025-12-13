@@ -1,12 +1,22 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Plus, X, Calendar, Sparkles, MessageSquare, Clock, Rss } from 'lucide-react';
+import { Search, Plus, X, Calendar, Sparkles, MessageSquare, Clock, Rss, Camera, User } from 'lucide-react';
 import { ContactItem } from '@/components/ContactItem';
 import { Avatar } from '@/components/Avatar';
 import { PlatformBadge } from '@/components/PlatformBadge';
 import { Button } from '@/components/ui/button';
 import { TopBar } from '@/components/TopBar';
 import { mockContacts, circles, Contact } from '@/data/mockData';
+import { useToast } from '@/hooks/use-toast';
+
+// Platform options for new contacts
+const platformOptions = [
+  { id: 'whatsapp', label: 'WhatsApp', color: 'bg-[#25D366]' },
+  { id: 'linkedin', label: 'LinkedIn', color: 'bg-[#0A66C2]' },
+  { id: 'email', label: 'Email', color: 'bg-gray-500' },
+  { id: 'signal', label: 'Signal', color: 'bg-[#3A76F0]' },
+  { id: 'telegram', label: 'Telegram', color: 'bg-[#26A5E4]' },
+];
 
 // Mock recent conversations
 const mockConversations = [
@@ -26,6 +36,16 @@ export default function Contacts() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newContact, setNewContact] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    title: '',
+    company: '',
+    platforms: [] as string[],
+  });
+  const { toast } = useToast();
 
   const filteredContacts = mockContacts.filter((contact) => {
     const matchesSearch = contact.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -103,9 +123,183 @@ export default function Contacts() {
       </main>
 
       {/* Add Contact FAB */}
-      <button className="fixed bottom-24 right-4 h-14 w-14 rounded-full gradient-primary shadow-glow flex items-center justify-center hover:scale-105 transition-transform">
+      <button 
+        onClick={() => setShowCreateModal(true)}
+        className="fixed bottom-24 right-4 h-14 w-14 rounded-full gradient-primary shadow-glow flex items-center justify-center hover:scale-105 transition-transform"
+      >
         <Plus className="h-6 w-6 text-primary-foreground" />
       </button>
+
+      {/* Create Contact Modal */}
+      <AnimatePresence>
+        {showCreateModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-foreground/20 backdrop-blur-sm overflow-y-auto"
+            onClick={() => setShowCreateModal(false)}
+          >
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 50, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="bg-card rounded-3xl shadow-elevated w-full max-w-lg mx-auto mt-[10vh] mb-24 overflow-hidden relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close button */}
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="absolute top-4 right-4 h-8 w-8 rounded-full bg-muted flex items-center justify-center z-10"
+              >
+                <X className="h-4 w-4 text-muted-foreground" />
+              </button>
+
+              {/* Header */}
+              <div className="px-6 pt-6 pb-4 border-b border-border">
+                <h2 className="text-xl font-bold text-foreground">Create New Contact</h2>
+              </div>
+
+              {/* Form */}
+              <div className="px-6 py-6 space-y-5">
+                {/* Profile Picture Placeholder */}
+                <div className="flex justify-center">
+                  <div className="relative">
+                    <div className="h-20 w-20 rounded-full bg-gradient-to-br from-primary/20 to-cyan-400/20 flex items-center justify-center">
+                      {newContact.name ? (
+                        <span className="text-2xl font-bold text-foreground">
+                          {newContact.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                        </span>
+                      ) : (
+                        <User className="h-8 w-8 text-muted-foreground" />
+                      )}
+                    </div>
+                    <button className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary flex items-center justify-center border-2 border-card">
+                      <Camera className="h-4 w-4 text-primary-foreground" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Name */}
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1.5 block">Name *</label>
+                  <input
+                    type="text"
+                    placeholder="Full name"
+                    value={newContact.name}
+                    onChange={(e) => setNewContact(prev => ({ ...prev, name: e.target.value }))}
+                    className="w-full h-11 px-4 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  />
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1.5 block">Phone Number</label>
+                  <input
+                    type="tel"
+                    placeholder="+1 (555) 123-4567"
+                    value={newContact.phone}
+                    onChange={(e) => setNewContact(prev => ({ ...prev, phone: e.target.value }))}
+                    className="w-full h-11 px-4 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1.5 block">Email</label>
+                  <input
+                    type="email"
+                    placeholder="email@example.com"
+                    value={newContact.email}
+                    onChange={(e) => setNewContact(prev => ({ ...prev, email: e.target.value }))}
+                    className="w-full h-11 px-4 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  />
+                </div>
+
+                {/* Title & Company */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-1.5 block">Title</label>
+                    <input
+                      type="text"
+                      placeholder="Job title"
+                      value={newContact.title}
+                      onChange={(e) => setNewContact(prev => ({ ...prev, title: e.target.value }))}
+                      className="w-full h-11 px-4 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-1.5 block">Company</label>
+                    <input
+                      type="text"
+                      placeholder="Company"
+                      value={newContact.company}
+                      onChange={(e) => setNewContact(prev => ({ ...prev, company: e.target.value }))}
+                      className="w-full h-11 px-4 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                    />
+                  </div>
+                </div>
+
+                {/* Platform Tags */}
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-2 block">Platforms</label>
+                  <div className="flex flex-wrap gap-2">
+                    {platformOptions.map((platform) => {
+                      const isSelected = newContact.platforms.includes(platform.id);
+                      return (
+                        <button
+                          key={platform.id}
+                          onClick={() => {
+                            setNewContact(prev => ({
+                              ...prev,
+                              platforms: isSelected
+                                ? prev.platforms.filter(p => p !== platform.id)
+                                : [...prev.platforms, platform.id]
+                            }));
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                            isSelected
+                              ? `${platform.color} text-white`
+                              : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                          }`}
+                        >
+                          {platform.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="px-6 pb-6 flex gap-3">
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => setShowCreateModal(false)}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  className="flex-1 gradient-primary text-primary-foreground border-0"
+                  onClick={() => {
+                    if (!newContact.name.trim()) {
+                      toast({ description: "Please enter a name", variant: "destructive" });
+                      return;
+                    }
+                    toast({ description: `${newContact.name} added to contacts!` });
+                    setNewContact({ name: '', phone: '', email: '', title: '', company: '', platforms: [] });
+                    setShowCreateModal(false);
+                  }}
+                >
+                  Create Contact
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Contact Detail Modal - Positioned at top */}
       <AnimatePresence>
