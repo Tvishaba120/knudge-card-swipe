@@ -89,16 +89,23 @@ export default function Deck() {
           <div className="relative" style={{ height: 'calc(100vh - 160px)' }}>
             {/* Cards stack container */}
             <AnimatePresence mode="popLayout">
-              {cards.slice(0, 4).reverse().map((card, index, arr) => (
-                <SwipeableCard
-                  key={card.id}
-                  card={card}
-                  onSwipeRight={() => handleSwipeRight(card.id)}
-                  onSwipeLeft={() => handleSwipeLeft(card.id)}
-                  isTop={index === arr.length - 1}
-                  stackIndex={arr.length - 1 - index}
-                />
-              ))}
+              {cards.slice(0, 4).reverse().map((card, index, arr) => {
+                const isTop = index === arr.length - 1;
+                const stackIndex = arr.length - 1 - index;
+                // Use unique key with card.id and stack position to force Brave mobile remount
+                const uniqueKey = `card-${card.id}-${cards.length}-${isTop ? 'top' : stackIndex}`;
+                
+                return (
+                  <SwipeableCard
+                    key={uniqueKey}
+                    card={card}
+                    onSwipeRight={() => handleSwipeRight(card.id)}
+                    onSwipeLeft={() => handleSwipeLeft(card.id)}
+                    isTop={isTop}
+                    stackIndex={stackIndex}
+                  />
+                );
+              })}
             </AnimatePresence>
           </div>
         )}
