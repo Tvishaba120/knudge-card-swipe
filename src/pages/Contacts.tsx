@@ -49,14 +49,14 @@ export default function Contacts() {
 
   const filteredContacts = mockContacts.filter((contact) => {
     const matchesSearch = contact.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter = activeFilter === 'All' || 
+    const matchesFilter = activeFilter === 'All' ||
       (activeFilter === 'VIP' && contact.isVIP) ||
       contact.circle === activeFilter;
     return matchesSearch && matchesFilter;
   });
 
   return (
-    <div className="min-h-screen bg-background pb-24 pt-20">
+    <div className="h-full bg-background pb-24">
       <TopBar title="Contacts" />
 
       <main className="px-4 py-4 space-y-4">
@@ -88,11 +88,10 @@ export default function Contacts() {
             <button
               key={circle}
               onClick={() => setActiveFilter(circle)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                activeFilter === circle
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${activeFilter === circle
                   ? 'gradient-primary text-primary-foreground'
                   : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-              }`}
+                }`}
             >
               {circle}
             </button>
@@ -123,7 +122,7 @@ export default function Contacts() {
       </main>
 
       {/* Add Contact FAB */}
-      <button 
+      <button
         onClick={() => setShowCreateModal(true)}
         className="fixed bottom-24 right-4 h-14 w-14 rounded-full gradient-primary shadow-glow flex items-center justify-center hover:scale-105 transition-transform"
       >
@@ -258,11 +257,10 @@ export default function Contacts() {
                                 : [...prev.platforms, platform.id]
                             }));
                           }}
-                          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                            isSelected
+                          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${isSelected
                               ? `${platform.color} text-white`
                               : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                          }`}
+                            }`}
                         >
                           {platform.label}
                         </button>
@@ -274,14 +272,14 @@ export default function Contacts() {
 
               {/* Actions */}
               <div className="px-6 pb-6 flex gap-3">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="flex-1"
                   onClick={() => setShowCreateModal(false)}
                 >
                   Cancel
                 </Button>
-                <Button 
+                <Button
                   className="flex-1 gradient-primary text-primary-foreground border-0"
                   onClick={() => {
                     if (!newContact.name.trim()) {
@@ -336,7 +334,7 @@ export default function Contacts() {
                   <p className="text-muted-foreground">
                     {selectedContact.title} {selectedContact.company && `at ${selectedContact.company}`}
                   </p>
-                  
+
                   {/* Platforms */}
                   <div className="flex items-center gap-2 mt-4">
                     {selectedContact.platforms.map((platform) => (
@@ -352,7 +350,7 @@ export default function Contacts() {
                     <span className="text-sm font-medium text-primary">AI Summary</span>
                   </div>
                   <p className="text-sm text-foreground">
-                    {selectedContact.isVIP 
+                    {selectedContact.isVIP
                       ? 'VIP contact with high engagement history. Known for quick responses and strategic partnerships. Consider scheduling quarterly check-ins.'
                       : 'Regular contact with moderate engagement. Last interaction was positive. Good candidate for collaborative opportunities.'}
                   </p>
@@ -376,14 +374,12 @@ export default function Contacts() {
                   <div className="relative pl-4 border-l-2 border-primary/20 space-y-3 max-h-48 overflow-y-auto">
                     {mockConversations.map((conv, index) => (
                       <div key={conv.id} className="relative">
-                        <div className={`absolute -left-[21px] top-2 h-3 w-3 rounded-full border-2 ${
-                          conv.isSent ? 'bg-primary border-primary' : 'bg-secondary border-secondary'
-                        }`} />
-                        <div className={`p-3 rounded-xl text-sm ${
-                          conv.isSent 
-                            ? 'bg-primary/10 border border-primary/20' 
+                        <div className={`absolute -left-[21px] top-2 h-3 w-3 rounded-full border-2 ${conv.isSent ? 'bg-primary border-primary' : 'bg-secondary border-secondary'
+                          }`} />
+                        <div className={`p-3 rounded-xl text-sm ${conv.isSent
+                            ? 'bg-primary/10 border border-primary/20'
                             : 'bg-muted/50 border border-border'
-                        }`}>
+                          }`}>
                           <div className="flex items-center gap-2 mb-1">
                             <span className={`text-xs font-medium ${conv.isSent ? 'text-primary' : 'text-muted-foreground'}`}>
                               {conv.isSent ? 'You' : selectedContact.name.split(' ')[0]}

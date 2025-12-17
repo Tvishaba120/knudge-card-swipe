@@ -197,11 +197,11 @@ export default function EmailDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col" {...swipeHandlers}>
+    <div className="h-full flex flex-col relative" {...swipeHandlers}>
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-card border-b border-border p-4">
+      <header className="sticky top-0 z-40 bg-card border-b border-border p-4 flex-shrink-0">
         <div className="flex items-center justify-between mb-2">
-          <button 
+          <button
             onClick={() => navigate('/inbox')}
             className="p-2 -ml-2 hover:bg-muted rounded-full transition-colors"
           >
@@ -214,10 +214,10 @@ export default function EmailDetail() {
               {currentIndex + 1} of {totalMessages}
             </span>
           </div>
-          
+
           <div className="flex items-center gap-1">
             {/* Navigation arrows */}
-            <button 
+            <button
               onClick={goToPrevious}
               disabled={!hasPrevious}
               className={cn(
@@ -227,7 +227,7 @@ export default function EmailDetail() {
             >
               <ChevronLeft className="h-5 w-5 text-muted-foreground" />
             </button>
-            <button 
+            <button
               onClick={goToNext}
               disabled={!hasNext}
               className={cn(
@@ -242,12 +242,12 @@ export default function EmailDetail() {
             </button>
           </div>
         </div>
-        
+
         <h1 className="text-xl font-bold text-foreground">{email.subject}</h1>
       </header>
 
       {/* Sender/Recipient Section */}
-      <div 
+      <div
         className="bg-muted/50 border-b border-border px-4 py-3 cursor-pointer"
         onClick={() => setShowRecipients(!showRecipients)}
       >
@@ -264,7 +264,7 @@ export default function EmailDetail() {
             <ChevronDown className="h-4 w-4 text-muted-foreground" />
           )}
         </div>
-        
+
         <AnimatePresence>
           {showRecipients && (
             <motion.div
@@ -284,14 +284,16 @@ export default function EmailDetail() {
         </AnimatePresence>
       </div>
 
-      {/* Email Content - Conversational View */}
-      <ConversationalEmailView 
-        threads={email.threads}
-        currentUserEmail="me@company.com"
-      />
+      {/* Email Content - Conversational View - Scrollable */}
+      <div className="flex-1 overflow-y-auto pb-[140px] md:pb-0">
+        <ConversationalEmailView
+          threads={email.threads}
+          currentUserEmail="me@company.com"
+        />
+      </div>
 
-      {/* Action Bar */}
-      <div className="fixed bottom-20 left-0 right-0 z-40 bg-card border-t border-border shadow-sm px-4 py-2">
+      {/* Action Bar - Fixed above bottom nav on mobile, Sticky on Desktop */}
+      <div className="fixed bottom-16 left-0 right-0 md:relative md:bottom-auto z-50 bg-card border-t border-border shadow-sm px-4 py-2 mt-auto">
         <div className="max-w-lg mx-auto flex gap-2">
           <button
             onClick={() => openComposer('reply')}
@@ -300,7 +302,7 @@ export default function EmailDetail() {
             <Reply className="h-3.5 w-3.5" />
             <span>Reply</span>
           </button>
-          
+
           <button
             onClick={() => openComposer('replyAll')}
             className="flex-1 flex items-center justify-center gap-1 bg-card border border-border text-foreground rounded-lg py-2.5 text-xs font-medium hover:bg-muted transition-colors"
@@ -308,7 +310,7 @@ export default function EmailDetail() {
             <ReplyAll className="h-3.5 w-3.5" />
             <span>Reply All</span>
           </button>
-          
+
           <button
             onClick={() => openComposer('forward')}
             className="flex-1 flex items-center justify-center gap-1 bg-card border border-border text-foreground rounded-lg py-2.5 text-xs font-medium hover:bg-muted transition-colors"

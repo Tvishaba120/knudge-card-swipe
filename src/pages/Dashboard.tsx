@@ -12,7 +12,7 @@ export default function Dashboard() {
   const connectedPlatforms = mockConnections.filter((c) => c.status === 'connected');
 
   return (
-    <div className="min-h-screen bg-background pb-24 pt-20">
+    <div className="h-full bg-background pb-20">
       <TopBar title="Knudge" />
 
       <main className="px-4 py-6 space-y-6">

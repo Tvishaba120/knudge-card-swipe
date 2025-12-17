@@ -68,13 +68,13 @@ export default function Settings() {
   const [birthdayReminders, setBirthdayReminders] = useState(true);
   const [socialMonitoring, setSocialMonitoring] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
-  
+
   const [circles, setCircles] = useState<Circle[]>(initialCircles);
   const [showCircleForm, setShowCircleForm] = useState(false);
   const [editingCircle, setEditingCircle] = useState<Circle | null>(null);
   const [circleForm, setCircleForm] = useState<Circle>({ name: '', channels: [], frequency: 'Weekly', contactIds: [], outreachAgenda: '' });
   const [contactSearchQuery, setContactSearchQuery] = useState('');
-  
+
   const [showProfileForm, setShowProfileForm] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile>({
     firstName: 'Alex',
@@ -141,9 +141,9 @@ export default function Settings() {
 
   const handleSaveCircle = () => {
     if (!circleForm.name || !circleForm.outreachAgenda || circleForm.channels.length === 0) return;
-    
+
     if (editingCircle) {
-      setCircles((prev) => 
+      setCircles((prev) =>
         prev.map((c) => c.name === editingCircle.name ? circleForm : c)
       );
     } else {
@@ -172,7 +172,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24 pt-20">
+    <div className="h-full bg-background pb-24">
       <TopBar title="Settings" />
 
       <main className="px-4 py-6 space-y-6">
@@ -192,7 +192,7 @@ export default function Settings() {
                 <h3 className="font-semibold text-foreground">{userProfile.firstName} {userProfile.lastName}</h3>
                 <p className="text-sm text-muted-foreground">{userProfile.email}</p>
               </div>
-              <button 
+              <button
                 onClick={handleEditProfile}
                 className="h-9 w-9 rounded-xl bg-muted/50 flex items-center justify-center hover:bg-muted transition-colors"
               >
@@ -214,7 +214,7 @@ export default function Settings() {
         >
           <div className="flex items-center justify-between mb-3 px-1">
             <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Circles</h2>
-            <button 
+            <button
               onClick={handleAddCircle}
               className="flex items-center gap-1 text-primary text-sm font-medium"
             >
@@ -224,8 +224,8 @@ export default function Settings() {
           </div>
           <div className="bg-card rounded-2xl border border-border divide-y divide-border">
             {circles.map((circle) => (
-              <button 
-                key={circle.name} 
+              <button
+                key={circle.name}
                 onClick={() => handleEditCircle(circle)}
                 className="w-full p-4 flex items-center justify-between text-left hover:bg-muted/30 transition-colors"
               >
@@ -503,7 +503,7 @@ export default function Settings() {
                       {circleForm.contactIds.length} selected
                     </span>
                   </div>
-                  
+
                   {/* Search Bar */}
                   <div className="relative mb-3">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -555,8 +555,8 @@ export default function Settings() {
                           >
                             <div className={cn(
                               'h-5 w-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all',
-                              isSelected 
-                                ? 'bg-primary border-primary' 
+                              isSelected
+                                ? 'bg-primary border-primary'
                                 : 'border-muted-foreground/30'
                             )}>
                               {isSelected && <Check className="h-3 w-3 text-primary-foreground" />}

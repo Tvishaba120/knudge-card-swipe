@@ -10,11 +10,11 @@ import { useUnreadStore } from '@/stores/unreadStore';
 // Helper function to highlight search terms
 const highlightText = (text: string, query: string): React.ReactNode => {
   if (!query.trim()) return text;
-  
+
   const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
   const parts = text.split(regex);
-  
-  return parts.map((part, index) => 
+
+  return parts.map((part, index) =>
     regex.test(part) ? (
       <mark key={index} className="bg-yellow-200 text-foreground px-0.5 rounded font-medium">
         {part}
@@ -146,11 +146,11 @@ export default function Inbox() {
     isSwiping: false,
   });
   const [removingId, setRemovingId] = useState<string | null>(null);
-  
+
   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
   const { clearUnreadInbox } = useUnreadStore();
-  
+
   // Clear unread count when page mounts
   useEffect(() => {
     clearUnreadInbox();
@@ -166,7 +166,7 @@ export default function Inbox() {
   // Long press handlers
   const handleLongPressStart = useCallback((messageId: string) => {
     if (selectionMode) return;
-    
+
     longPressTimerRef.current = setTimeout(() => {
       setSelectionMode(true);
       setSelectedIds(new Set([messageId]));
@@ -183,7 +183,7 @@ export default function Inbox() {
   // Touch/Swipe handlers
   const handleTouchStart = useCallback((e: React.TouchEvent, messageId: string) => {
     if (selectionMode) return;
-    
+
     handleLongPressStart(messageId);
     setSwipeState({
       messageId,
@@ -195,10 +195,10 @@ export default function Inbox() {
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (selectionMode || !swipeState.messageId) return;
-    
+
     const currentX = e.touches[0].clientX;
     const diff = currentX - swipeState.startX;
-    
+
     // Cancel long press if user starts swiping
     if (Math.abs(diff) > 10) {
       handleLongPressEnd();
@@ -208,7 +208,7 @@ export default function Inbox() {
 
   const handleTouchEnd = useCallback(() => {
     handleLongPressEnd();
-    
+
     if (selectionMode || !swipeState.messageId || !swipeState.isSwiping) {
       setSwipeState({ messageId: null, offsetX: 0, startX: 0, isSwiping: false });
       return;
@@ -220,7 +220,7 @@ export default function Inbox() {
     if (swipeState.offsetX < -SWIPE_THRESHOLD) {
       const msgId = swipeState.messageId;
       setRemovingId(msgId);
-      
+
       setTimeout(() => {
         setMessages(prev => prev.filter(m => m.id !== msgId));
         setRemovingId(null);
@@ -239,7 +239,7 @@ export default function Inbox() {
         }
         return m;
       }));
-      
+
       const msg = messages.find(m => m.id === msgId);
       toast({
         description: msg?.unread ? "Message marked as read" : "Message marked as unread",
@@ -291,7 +291,7 @@ export default function Inbox() {
   }, []);
 
   const markSelectedAsRead = useCallback(() => {
-    setMessages(prev => prev.map(m => 
+    setMessages(prev => prev.map(m =>
       selectedIds.has(m.id) ? { ...m, unread: false, unreadCount: undefined } : m
     ));
     toast({
@@ -318,7 +318,7 @@ export default function Inbox() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background pb-24 pt-20">
+    <div className="h-full bg-background pb-24">
       <TopBar title="Inbox" />
 
       <main className="px-4 py-4 space-y-4">
@@ -397,8 +397,8 @@ export default function Inbox() {
                 <motion.div
                   key={message.id}
                   initial={{ opacity: 0, x: -10 }}
-                  animate={{ 
-                    opacity: isRemoving ? 0 : 1, 
+                  animate={{
+                    opacity: isRemoving ? 0 : 1,
                     x: isRemoving ? -300 : 0,
                     height: isRemoving ? 0 : 'auto'
                   }}
@@ -410,7 +410,7 @@ export default function Inbox() {
                   )}
                 >
                   {/* Swipe Background - Left (Archive) */}
-                  <div 
+                  <div
                     className="absolute inset-y-0 right-0 bg-destructive flex items-center justify-end px-6 transition-opacity"
                     style={{ opacity: swipeOffset < -20 ? Math.min(1, Math.abs(swipeOffset) / 100) : 0 }}
                   >
@@ -421,7 +421,7 @@ export default function Inbox() {
                   </div>
 
                   {/* Swipe Background - Right (Toggle Unread) */}
-                  <div 
+                  <div
                     className="absolute inset-y-0 left-0 bg-primary flex items-center justify-start px-6 transition-opacity"
                     style={{ opacity: swipeOffset > 20 ? Math.min(1, swipeOffset / 100) : 0 }}
                   >
@@ -439,7 +439,7 @@ export default function Inbox() {
                       isSelected && 'bg-primary/10',
                       selectionMode && 'select-none'
                     )}
-                    style={{ 
+                    style={{
                       transform: `translateX(${swipeOffset}px)`,
                       transition: swipeState.isSwiping ? 'none' : 'transform 0.2s ease-out'
                     }}

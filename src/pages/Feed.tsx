@@ -25,8 +25,8 @@ export default function Feed() {
     clearUnreadFeed();
   }, [clearUnreadFeed]);
 
-  const filteredItems = activeTab === 'all' 
-    ? items 
+  const filteredItems = activeTab === 'all'
+    ? items
     : items.filter((item) => item.type === activeTab);
 
   const handleDraft = (itemId: string) => {
@@ -41,7 +41,7 @@ export default function Feed() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24 pt-20">
+    <div className="h-full bg-background pb-24">
       <TopBar title="Feed" />
 
       {/* Desktop: Manage Sources Button - Top right */}
@@ -69,11 +69,10 @@ export default function Feed() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                activeTab === tab.id
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${activeTab === tab.id
                   ? 'gradient-primary text-primary-foreground'
                   : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-              }`}
+                }`}
             >
               {tab.label}
             </button>
