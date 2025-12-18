@@ -91,7 +91,7 @@ export default function Deck() {
             <AnimatePresence mode="popLayout">
               {cards.slice(0, 4).reverse().map((card, index, arr) => (
                 <SwipeableCard
-                  key={card.id}
+                  key={`${card.id}-${index === arr.length - 1 ? 'top' : 'stack'}`}
                   card={card}
                   onSwipeRight={() => handleSwipeRight(card.id)}
                   onSwipeLeft={() => handleSwipeLeft(card.id)}
