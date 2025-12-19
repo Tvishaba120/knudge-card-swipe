@@ -294,7 +294,7 @@ export default function EmailDetail() {
 
       {/* Action Bar - Fixed above bottom nav on mobile, Sticky on Desktop */}
       <div
-        className="fixed bottom-[calc(64px+env(safe-area-inset-bottom,0px))] left-0 right-0 md:relative md:bottom-auto z-20 bg-card border-t border-border shadow-sm px-4 py-3 mt-auto"
+        className="fixed bottom-[calc(68px+env(safe-area-inset-bottom,0px))] left-0 right-0 md:relative md:bottom-auto z-20 bg-card border-t border-border shadow-sm px-4 py-3 mt-auto"
       >
         <div className="max-w-lg mx-auto flex gap-2">
           <button

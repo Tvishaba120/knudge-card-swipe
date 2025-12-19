@@ -276,6 +276,11 @@ export default function Inbox() {
     if (selectionMode) {
       toggleSelection(message.id);
     } else if (!swipeState.isSwiping) {
+      // Mark message as read before navigating
+      setMessages(prev => prev.map(m =>
+        m.id === message.id ? { ...m, unread: false, unreadCount: undefined } : m
+      ));
+
       // Navigate to appropriate detail view based on platform
       if (message.platform === 'email') {
         navigate(`/inbox/email/${message.id}`);
@@ -318,10 +323,10 @@ export default function Inbox() {
   }, []);
 
   return (
-    <div className="h-full bg-background pb-24">
+    <div className="h-full bg-background pb-32 md:pb-4">
       <TopBar title="Inbox" />
 
-      <main className="px-4 py-4 space-y-4">
+      <main className="px-4 py-4 pb-32 md:pb-4 space-y-4">
         {/* Search Bar */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}

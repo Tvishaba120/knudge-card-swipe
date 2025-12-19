@@ -709,7 +709,7 @@ export default function ChatDetail() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="fixed bottom-[calc(64px+env(safe-area-inset-bottom,0px)+80px)] left-4 z-40 bg-card rounded-xl border border-border shadow-xl py-2 w-56"
+            className="fixed bottom-[calc(80px+env(safe-area-inset-bottom,0px)+80px)] left-4 z-40 bg-card rounded-xl border border-border shadow-xl py-2 w-56"
           >
             {attachmentMenuItems.map((item) => {
               const Icon = item.icon;
@@ -739,7 +739,7 @@ export default function ChatDetail() {
 
       {/* Input Bar - Fixed above bottom nav on mobile (64px), Sticky bottom on desktop */}
       <div
-        className="fixed bottom-[calc(64px+env(safe-area-inset-bottom,0px))] left-0 right-0 md:relative md:bottom-auto z-20 bg-card border-t border-border shadow-lg mt-auto"
+        className="fixed bottom-[calc(80px+env(safe-area-inset-bottom,0px))] left-0 right-0 md:relative md:bottom-auto z-20 bg-card border-t border-border shadow-lg mt-auto"
       >
         <div className="w-full max-w-3xl mx-auto px-4 py-3">
           {/* File Preview */}

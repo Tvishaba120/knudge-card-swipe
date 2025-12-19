@@ -72,7 +72,7 @@ function RecipientChipInput({
   const addRecipient = (email: string) => {
     const trimmedEmail = email.trim();
     if (!trimmedEmail) return;
-    
+
     // Check if already exists
     if (recipients.some(r => r.email.toLowerCase() === trimmedEmail.toLowerCase())) {
       setInputValue('');
@@ -104,7 +104,7 @@ function RecipientChipInput({
   };
 
   return (
-    <div 
+    <div
       className="flex-1 flex flex-wrap items-center gap-1.5 min-h-[36px] cursor-text"
       onClick={() => inputRef.current?.focus()}
     >
@@ -206,7 +206,7 @@ export default function EmailComposer({ isOpen, onClose, mode, originalEmail }: 
     let index = 0;
     const currentBody = prepend ? '' : body.split('\n\n\n---')[1] || '';
     const suffix = currentBody ? `\n\n\n---${currentBody}` : '';
-    
+
     setBody('');
     const interval = setInterval(() => {
       if (index < text.length) {
@@ -230,7 +230,7 @@ export default function EmailComposer({ isOpen, onClose, mode, originalEmail }: 
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     const composedPart = body.split('\n\n\n---')[0].trim();
-    
+
     if (!composedPart) {
       const draftKey = mode === 'forward' ? 'forward' : 'reply';
       const draft = aiDraftEmails[draftKey].replace('{name}', originalEmail?.sender.split(' ')[0] || 'there');
@@ -252,15 +252,15 @@ export default function EmailComposer({ isOpen, onClose, mode, originalEmail }: 
 
   const polishEmail = (text: string): string => {
     let polished = text.charAt(0).toUpperCase() + text.slice(1);
-    
+
     if (!polished.toLowerCase().startsWith('hi') && !polished.toLowerCase().startsWith('hello') && !polished.toLowerCase().startsWith('dear')) {
       polished = `Hi ${originalEmail?.sender.split(' ')[0] || 'there'},\n\n${polished}`;
     }
-    
+
     if (!polished.toLowerCase().includes('best') && !polished.toLowerCase().includes('regards') && !polished.toLowerCase().includes('thanks')) {
       polished = `${polished}\n\nBest regards`;
     }
-    
+
     return polished;
   };
 
@@ -290,11 +290,11 @@ export default function EmailComposer({ isOpen, onClose, mode, originalEmail }: 
 
     setIsSending(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     toast({
       description: "Email sent ✓",
     });
-    
+
     setIsSending(false);
     onClose();
   };
@@ -448,7 +448,8 @@ export default function EmailComposer({ isOpen, onClose, mode, originalEmail }: 
           </div>
 
           {/* Text Editor */}
-          <div className="flex-1 overflow-y-auto relative">
+          {/* Text Editor */}
+          <div className="flex-1 overflow-y-auto relative pb-24 md:pb-0">
             <textarea
               ref={textareaRef}
               value={body}
@@ -457,7 +458,7 @@ export default function EmailComposer({ isOpen, onClose, mode, originalEmail }: 
               className="w-full min-h-[200px] md:min-h-[300px] h-full p-4 md:p-6 pr-16 md:pr-20 text-base text-foreground bg-card resize-none focus:outline-none"
               autoFocus
             />
-            
+
             {/* Floating AI Sparkle Button */}
             <button
               onClick={handleAiSparkle}
@@ -480,7 +481,7 @@ export default function EmailComposer({ isOpen, onClose, mode, originalEmail }: 
                 <Sparkles className="w-6 h-6 md:w-7 md:h-7" />
               )}
             </button>
-            
+
             {/* Undo Button */}
             {showUndo && (
               <button
@@ -493,7 +494,7 @@ export default function EmailComposer({ isOpen, onClose, mode, originalEmail }: 
           </div>
 
           {/* Toolbar */}
-          <div className="sticky bottom-0 bg-card border-t border-border p-3">
+          <div className="sticky bottom-0 bg-card border-t border-border p-3 pb-20 md:pb-3 z-20">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1">
                 <button className="p-2 hover:bg-muted rounded-lg transition-colors">
@@ -523,29 +524,6 @@ export default function EmailComposer({ isOpen, onClose, mode, originalEmail }: 
                   <Paperclip className="h-4 w-4 text-muted-foreground" />
                 </button>
               </div>
-              
-              <button
-                onClick={handleSend}
-                disabled={isSending || !toRecipients.length || !subject.trim()}
-                className={cn(
-                  "flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold transition-all",
-                  toRecipients.length && subject.trim()
-                    ? "bg-gradient-to-r from-primary to-cyan-500 text-white hover:opacity-90"
-                    : "bg-muted text-muted-foreground cursor-not-allowed"
-                )}
-              >
-                {isSending ? (
-                  <>
-                    <span className="animate-spin h-4 w-4 border-2 border-white/30 border-t-white rounded-full" />
-                    <span>Sending...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-4 w-4" />
-                    <span>Send</span>
-                  </>
-                )}
-              </button>
             </div>
           </div>
         </motion.div>

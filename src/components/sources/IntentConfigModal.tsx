@@ -57,7 +57,7 @@ export function IntentConfigModal({ isOpen, onClose, onSave, source, editingSour
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -76,11 +76,11 @@ export function IntentConfigModal({ isOpen, onClose, onSave, source, editingSour
             transition={{ type: "spring", duration: 0.3, bounce: 0.1 }}
             className={cn(
               "relative z-10 w-full flex flex-col",
-              "bg-card rounded-2xl shadow-2xl",
+              "bg-card rounded-2xl shadow-2xl mx-auto",
               // Widths
-              "max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl",
-              // Heights - CRITICAL FIX
-              "max-h-[90vh] min-h-[400px]",
+              "max-w-[calc(100vw-24px)] sm:max-w-lg md:max-w-xl lg:max-w-2xl",
+              // Heights - BULLETPROOF FIX FOR SMALL SCREENS (400x568)
+              "max-h-[75vh] sm:max-h-[85vh] min-h-[350px]",
               "overflow-hidden"
             )}
           >
@@ -130,13 +130,14 @@ export function IntentConfigModal({ isOpen, onClose, onSave, source, editingSour
             {/* Footer - Fixed at bottom (Sticky) */}
             <div
               className={cn(
-                "flex-shrink-0 sticky bottom-0 z-10",
+                "flex-shrink-0 z-20",
                 "flex items-center justify-end gap-3",
                 "p-4 sm:p-6",
-                "border-t border-border bg-card"
+                "border-t border-border bg-card",
+                "shadow-[0_-4px_12px_rgba(0,0,0,0.1)]"
               )}
               style={{
-                paddingBottom: 'max(1rem, env(safe-area-inset-bottom))'
+                paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))'
               }}
             >
               <Button
